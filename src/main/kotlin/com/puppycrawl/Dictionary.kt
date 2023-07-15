@@ -3,20 +3,17 @@ package com.puppycrawl
 import java.nio.file.Files
 import java.nio.file.Path
 
-data class SearchResult(val exactMatch: Boolean, val partialMatch: Boolean)
-
-class Dictionary(private val words: List<String>) {
+class Dictionary(private val words: List<String>) : Searcher {
     companion object {
         fun fromFile(dictFile: Path, minLen: Int, maxLen: Int): Dictionary {
-            val words = Files.lines(dictFile)
-                .filter { it.length in minLen..maxLen }
-                .filter { it.all { c -> c.isLowerCase() } }
-                .toList()
+            val words =
+                Files.lines(dictFile).filter { it.length in minLen..maxLen }.filter { it.all { c -> c.isLowerCase() } }
+                    .toList()
             return Dictionary(words)
         }
     }
 
-    fun search(word: String): SearchResult {
+    override fun search(word: String): SearchResult {
         var exactMatch = false
         var partialMatch = false
 
